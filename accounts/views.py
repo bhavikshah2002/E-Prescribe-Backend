@@ -3,8 +3,10 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import *
+from .utils import Util
 from .models import *
 from django.urls import reverse
+from rest_framework.decorators import api_view
 from django.contrib.auth.models import update_last_login
 from django.shortcuts import render
 # Create your views here.
@@ -17,37 +19,39 @@ class Registration(generics.CreateAPIView):
             if serializer.is_valid():
                 my_user = serializer.save()
                 token = Token.objects.get(user = my_user).key
-                data['token']=token
+                data['old_token']=token
                 data['username']=my_user.username
-                # current_site = 'http://gitbase.sytes.net:8081'
-                # relative_link = reverse('verifyEmail')          
-                # absurl = current_site + relative_link + "?token="+str(token) 
-                # email_body = 'Hi ' + my_user.username + ' Use link below to verify your email \n' + absurl  
-                # data_email = {'email_body': email_body, 'to_email': my_user.email, 'email_subject':'Verify your email'}     
-                # Util.send_email(data_email)           
+                current_site = 'http://eprescribeserver.pythonanywhere.com'
+                relative_link = reverse('verifyEmail')          
+                absurl = current_site + relative_link + "?token="+str(token) 
+                email_body = 'Hi ' + my_user.username + ' Use link below to verify your email \n' + absurl  
+                data_email = {'email_body': email_body, 'to_email': my_user.email, 'email_subject':'Verify your email'}     
+                Util.send_email(data_email)           
             else:
                 data=serializer.errors
             return Response(data)
 
-# def verifyEmail(request): 
-#     data = {}
-#     token = request.GET.get('token')
-#     try:
-#         user = MyUser.objects.get(auth_token = token)
-#     except:
-#         content = {'detail': 'User already activated!'}
-#         return render(request, 'AlreadyEmailVerified.html')
-#     token = request.GET.get('token')
-#     if user.is_active == False:
-#         user.is_active = True
-#         user.save()
-#         Token.objects.get(user = user).delete()
-#         Token.objects.create(user = user)
-#         new_token = Token.objects.get(user = user).key       
-#         return render(request, 'EmailVerify.html')
-#     else:
-#         data={'status':'Email Not Verified'}
-#         return render(request, 'EmailNotVerified.html')
+
+@api_view(['GET'])
+def verifyEmail(request): 
+    data = {}
+    token = request.GET.get('token')
+    try:
+        user = MyUser.objects.get(auth_token = token)
+    except:
+        content = {'detail': 'User already activated!'}
+        return render(request, 'AlreadyEmailVerified.html')
+    token = request.GET.get('token')
+    if user.is_active == False:
+        user.is_active = True
+        user.save()
+        Token.objects.get(user = user).delete()
+        Token.objects.create(user = user)
+        new_token = Token.objects.get(user = user).key       
+        return render(request, 'EmailVerify.html')
+    else:
+        data={'status':'Email Not Verified'}
+        return render(request, 'EmailNotVerified.html')
 
 class LoginView(generics.CreateAPIView):
     serializer_class=LoginSerializer

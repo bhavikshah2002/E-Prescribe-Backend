@@ -22,8 +22,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
             username          = validated_data['username'],
             first_name        = validated_data['first_name'],
             last_name         = validated_data['last_name'],
+            is_doctor         = validated_data['is_doctor'],
+            age               = validated_data['age'],
         )
-        print(user)
         user.set_password(validated_data['password'])
         user.save()
         return user
@@ -38,9 +39,7 @@ class LoginSerializer(serializers.ModelSerializer):
         email = attrs.get('email', '')
         password = attrs.get('password', '')
         user = authenticate(email=email, password=password)
-        print(email,password)
         if not user:
-            print("HERE")
             raise AuthenticationFailed('Invalid credentials, try again')
         if not user.is_active:
             raise AuthenticationFailed('Account disabled, contact admin')
