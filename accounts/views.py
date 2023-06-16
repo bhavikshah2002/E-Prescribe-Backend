@@ -101,12 +101,11 @@ class MyUserView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MyUser.objects.all()
     serializer_class = MyUserSerializer
     def get(self,request,pk):
-        query=MyUser.objects.filter(user_id=self.request.user.user_id).get(pk=pk)   
-        print(query)     
+        query=MyUser.objects.get(pk=pk)        
         serializer=MyUserSerializer(query)       
         return Response(serializer.data)
     def patch(self, request,pk):
-        query = MyUser.objects.filter(user_id=self.request.user.user_id).get(pk=pk)
+        query=MyUser.objects.get(pk=pk) 
         serializer = MyUserSerializer(query, data=request.data,partial=True)            
         if serializer.is_valid():
             serializer.save()
