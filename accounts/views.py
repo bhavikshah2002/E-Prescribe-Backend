@@ -9,6 +9,7 @@ from django.urls import reverse
 from rest_framework.decorators import api_view
 from django.contrib.auth.models import update_last_login
 from django.shortcuts import render
+from decouple import config
 # Create your views here.
 class Registration(generics.CreateAPIView):
     serializer_class=RegistrationSerializer
@@ -19,6 +20,7 @@ class Registration(generics.CreateAPIView):
             if serializer.is_valid():
                 my_user = serializer.save()
                 token = Token.objects.get(user = my_user).key
+                token = Token.objects.get(user = my_user).key
                 data['old_token']=token
                 data['username']=my_user.username
                 current_site = 'http://eprescribeserver.pythonanywhere.com'
@@ -26,7 +28,14 @@ class Registration(generics.CreateAPIView):
                 absurl = current_site + relative_link + "?token="+str(token) 
                 email_body = 'Hi ' + my_user.username + ' Use link below to verify your email \n' + absurl  
                 data_email = {'email_body': email_body, 'to_email': my_user.email, 'email_subject':'Verify your email'}     
-                Util.send_email(data_email)           
+                Util.send_email(data_email)
+                if my_user.is_doctor == True:
+                    relative_link2 = reverse('verifyDoctor')          
+                    absurl = current_site + relative_link2 + "?user_id="+str(my_user.user_id) 
+                    email_body = 'Please Verify ' + my_user.username + 'as a valid doctor.\nUse link below to verify the doctor \n' + absurl  
+                    data_email = {'email_body': email_body, 'to_email': config('EMAIL_HOST_USER'), 'email_subject':f'Verify the doctor with username {my_user.username}'}     
+                    Util.send_email(data_email)
+
             else:
                 data=serializer.errors
             return Response(data)
@@ -52,6 +61,23 @@ def verifyEmail(request):
     else:
         data={'status':'Email Not Verified'}
         return render(request, 'EmailNotVerified.html')
+    
+@api_view(['GET'])
+def verifyDoctor(request): 
+    data = {}
+    user_id = request.GET.get('user_id')
+    try:
+        user = MyUser.objects.get(user_id = user_id)
+    except:
+        content = {'detail': 'User already activated!'}
+        return render(request, 'NoUserFound.html')
+    if user.is_verified == False:
+        user.is_verified = True
+        user.save()    
+        return render(request, 'DoctorVerified.html')
+    else:
+        data={'status':'Doctor Not Verified'}
+        return render(request, 'NoUserFound.html')
 
 class LoginView(generics.CreateAPIView):
     serializer_class=LoginSerializer
