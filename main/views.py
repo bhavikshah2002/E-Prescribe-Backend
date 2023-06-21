@@ -53,3 +53,15 @@ class PatientDetailsView(generics.ListCreateAPIView):
                 patientList.append(i['patient_id'])
         finalReturn['patient_details'] = patient_details    
         return Response(finalReturn)
+    
+class PatientSearch(generics.ListAPIView):
+    queryset=MyUser.objects.all()
+    serializer_class=MyUserSerializer
+    def get_queryset(self):
+        query=self.request.GET.get('patient')           
+        allPatient=MyUser.objects.filter(username__icontains=query )
+        temp = MyUser.objects.filter(first_name__icontains=query)
+        temp2 = MyUser.objects.filter(last_name__icontains=query)
+        allPatient= allPatient | temp | temp2 
+        allPatient=allPatient.filter(is_doctor = False)
+        return allPatient
