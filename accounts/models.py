@@ -20,7 +20,7 @@ class MyUser(AbstractUser):
     REQUIRED_FIELDS=['username']
     
     def __str__(self):
-        return self.username
+        return str(self.user_id)
 
 @receiver(post_save, sender = settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance = None, created = False, **kwargs):

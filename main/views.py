@@ -73,7 +73,9 @@ class VisitView(generics.ListCreateAPIView):
         serializer = VisitSerializer(data=request.data)
         doctor = MyUser.objects.get(user_id=self.request.user.user_id)
         if serializer.is_valid() and (doctor.is_doctor):
-            session=Session.objects.get(session_id=request.data['session'])          
+            session=Session.objects.get(session_id=request.data['session']) 
+            if session.doctor_id!=doctor:
+                return Response({"Error":"Doctor doesn't own this Session"}, status=status.HTTP_400_BAD_REQUEST)             
             serializer.save(session = session)
             returnData=serializer.data
             return Response(returnData, status=status.HTTP_201_CREATED)
