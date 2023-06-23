@@ -7,3 +7,9 @@ class SessionSerializer(serializers.ModelSerializer):
         model=Session
         fields="__all__"
 
+class VisitSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=Visit
+        fields="__all__"
+

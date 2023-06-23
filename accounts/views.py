@@ -91,10 +91,10 @@ class LoginView(generics.CreateAPIView):
             if user.is_doctor==True and user.is_verified==False:
                 return Response({'email':user.email,"is_doctor":user.is_doctor,"is_verified":user.is_verified}, status = status.HTTP_401_UNAUTHORIZED)
             data = {}
-            data['email'] = user.email
             data['token'] = token
             data['user_id']=user.user_id
             data['username']=user.username
+            data['is_doctor']=user.is_doctor
             return Response(data, status = status.HTTP_200_OK)
 
 class MyUserView(generics.RetrieveUpdateDestroyAPIView):

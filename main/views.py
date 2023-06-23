@@ -65,3 +65,28 @@ class PatientSearch(generics.ListAPIView):
         allPatient= allPatient | temp | temp2 
         allPatient=allPatient.filter(is_doctor = False)
         return allPatient
+    
+class VisitView(generics.ListCreateAPIView):
+    queryset = Visit.objects.all()
+    serializer_class = VisitSerializer
+    def post(self, request):
+        serializer = VisitSerializer(data=request.data)
+        doctor = MyUser.objects.get(user_id=self.request.user.user_id)
+        if serializer.is_valid() and (doctor.is_doctor):
+            session=Session.objects.get(session_id=request.data['session'])          
+            serializer.save(session = session)
+            returnData=serializer.data
+            return Response(returnData, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        query = Visit.objects.all()
+        serializer = VisitSerializer(query,many = True)
+        returnData = ""
+        returnData=serializer.data
+        return Response(returnData, status=status.HTTP_201_CREATED)
+    
+    def delete(self,request):
+        vis = Visit.objects.get(visit_id = request.data["visit_id"])
+        vis.delete()
+        return Response("Visit Deleted")

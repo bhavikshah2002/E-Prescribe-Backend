@@ -12,11 +12,12 @@ class Session(models.Model):
     def __str__(self):
         return str(self.session_id)
 
-class Vist(models.Model):
+class Visit(models.Model):
     visit_id = models.AutoField(primary_key=True)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE,null=True,related_name="session")
     visit_date = models.DateTimeField(auto_now_add=True)
-    symptoms = models.CharField(max_length=250,blank=True,null=True)
-    note = models.CharField(max_length=500,blank=True,null=True)
+    symptoms = models.TextField(max_length=250,blank=True,null=True)
+    note = models.TextField(max_length=500,blank=True,null=True)
     temperature = models.IntegerField(null=True,blank=True)
     sugar = models.IntegerField(null=True,blank=True)
     bp = models.CharField(null=True,blank=True,max_length=10)

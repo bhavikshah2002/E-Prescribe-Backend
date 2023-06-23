@@ -5,4 +5,5 @@ urlpatterns = [
     path('session/<int:id>/',SessionView.as_view(),name='SinglePatientSession'),
     path('patientdetails/',PatientDetailsView.as_view(),name='Patient'),
     path('patientsearch/',PatientSearch.as_view(),name='Search-patient'),
+    path('visit/',VisitView.as_view(),name='Visit'),
 ]
