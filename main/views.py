@@ -33,7 +33,7 @@ class SessionView(generics.ListCreateAPIView):
 
     
 
-class PatientDetailsView(generics.ListCreateAPIView):
+class PatientDetailsView(generics.ListAPIView):
     queryset = Session.objects.all()
     serializer_class = SessionSerializer
     def get(self, request):
@@ -92,3 +92,15 @@ class VisitView(generics.ListCreateAPIView):
         vis = Visit.objects.get(visit_id = request.data["visit_id"])
         vis.delete()
         return Response("Visit Deleted")
+    
+class VisitGetView(generics.ListAPIView):
+    queryset = Visit.objects.all()
+    serializer_class = SessionVisit
+    def get(self, request):
+        session=self.request.GET.get('session')
+        query = Visit.objects.filter(session = session)
+        serializer = SessionVisit(query,many = True)
+        returnData = ""
+        returnData=serializer.data
+        return Response(returnData, status=status.HTTP_201_CREATED)
+    

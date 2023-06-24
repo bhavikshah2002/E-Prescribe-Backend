@@ -13,3 +13,8 @@ class VisitSerializer(serializers.ModelSerializer):
         model=Visit
         fields="__all__"
 
+class SessionVisit(serializers.ModelSerializer):
+    class Meta:
+        model=Visit
+        fields="__all__"
+
