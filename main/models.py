@@ -21,11 +21,5 @@ class Visit(models.Model):
     temperature = models.IntegerField(null=True,blank=True)
     sugar = models.IntegerField(null=True,blank=True)
     bp = models.CharField(null=True,blank=True,max_length=10)
-    def set_symptoms(self, x):
-        self.symptoms = json.dumps(x)
-
-    def get_symptoms(self):
-        return json.loads(self.symptoms)
-    
     def __str__(self):
         return str(self.visit_id)

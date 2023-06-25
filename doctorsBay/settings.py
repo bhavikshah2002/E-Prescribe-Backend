@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'accounts',
     'main',
+    'prescription',
     'rest_framework',
     'rest_framework.authtoken'
 ]

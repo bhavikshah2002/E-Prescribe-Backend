@@ -15,7 +15,7 @@ class MyUser(AbstractUser):
     created_at        = models.DateTimeField(auto_now_add=True)
     is_doctor         = models.BooleanField(default=False)
     is_verified       = models.BooleanField(default=False)
-    is_active         = models.BooleanField(default=False)
+    is_active         = models.BooleanField(default=True)
     USERNAME_FIELD='email'
     REQUIRED_FIELDS=['username']
     
