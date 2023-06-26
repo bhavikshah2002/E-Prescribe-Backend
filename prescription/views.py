@@ -25,10 +25,9 @@ class MedicineView(generics.ListCreateAPIView):
     def get(self,request,med_name):
         response=self.post(request,med_name)
         if response.status_code==201:
-            render(request, 'MedicineAdded.html')
+            return render(request,'MedicineAdded.html')
         else:
-            render(request, 'MedicineNotAdded.html')
-        return response
+            return render(request,'MedicineNotAdded.html')
 
     
 class MedicineGetView(generics.ListAPIView):
