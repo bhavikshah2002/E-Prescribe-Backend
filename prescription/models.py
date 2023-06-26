@@ -3,7 +3,9 @@ from main.models import *
 # Create your models here.
 class Medicine(models.Model):
     med_id = models.AutoField(primary_key=True)
-    med_name = models.CharField(max_length=10)
+    med_name = models.TextField()
+    med_username = models.TextField(unique=True,blank=False,default="medicine")
+    REQUIRED_FIELDS=['med_username']
     def __str__(self):
         return str(self.med_id)
 
