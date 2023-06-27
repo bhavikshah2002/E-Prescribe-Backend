@@ -16,5 +16,6 @@ class Prescription(models.Model):
     morning = models.IntegerField(null=True,blank=True,default=0)
     afternoon = models.IntegerField(null=True,blank=True,default=0)
     night = models.IntegerField(null=True,blank=True,default=0)
+    num_days = models.IntegerField(null=True,blank=True,default=1)
     def __str__(self):
         return str(self.pres_id)

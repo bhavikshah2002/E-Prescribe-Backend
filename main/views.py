@@ -73,7 +73,7 @@ class VisitView(generics.ListCreateAPIView):
     queryset = Visit.objects.all()
     serializer_class = VisitSerializer
     def post(self, request):
-        session_detail = self.request.data["sessionDetails"]
+        session_detail = self.request.data["visitDetails"]
         prescription = request.data["prescription"]
         serializer = VisitSerializer(data=session_detail)
         doctor = MyUser.objects.get(user_id=self.request.user.user_id)
