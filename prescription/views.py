@@ -44,8 +44,8 @@ class MedicineSuggestion(generics.ListCreateAPIView):
     queryset = Medicine.objects.all()
     serializer_class = MedicineGetSerializer
     def post(self, request):
-        doctor = MyUser.objects.get(user_id=self.request.user.user_id)
-        if doctor:
+        try:
+            doctor = MyUser.objects.get(user_id=self.request.user.user_id)
             med_name = self.request.data["med_name"]
             current_site = 'http://eprescribeserver.pythonanywhere.com'
             relative_link = '/prescription/medicine/'        
@@ -54,16 +54,19 @@ class MedicineSuggestion(generics.ListCreateAPIView):
             data_email = {'email_body': email_body, 'to_email': config('EMAIL_HOST_USER'), 'email_subject':f"Add Medicine {med_name}'s suggestion"}     
             Util.send_email(data_email)
             return Response({"success":"Suggestion sent"}, status=status.HTTP_201_CREATED)
-        else:
-            Response({"Failure":"Not a valid doctor"}, status=status.HTTP_400_BAD_REQUEST)
-        
+        except:
+            return Response({"Failure":"Not a valid doctor"}, status=status.HTTP_400_BAD_REQUEST)
 
 def set_prescription(data):
     serializer = PrescriptionSerializer(data=data)
-    if serializer.is_valid():
-        med = Medicine.objects.get(med_id=data.med_id)
-        serializer.save()
-        returnData=serializer.data
-        return Response(returnData, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
+    try:
+        if serializer.is_valid():
+            med = Medicine.objects.get(med_id=data['medicine'])
+            visit = Visit.objects.get(visit_id = data['visit'])
+            serializer.save(medicine = med,visit = visit)
+            return serializer.data
+        else:
+            return serializer.errors
+    except:
+        return serializer.errors
     

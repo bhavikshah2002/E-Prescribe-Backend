@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from accounts.serializers import *
 from prescription.serializers import *
 import random
+from prescription.views import set_prescription
 # Create your views here.
 
 class SessionView(generics.ListCreateAPIView):
@@ -72,14 +73,21 @@ class VisitView(generics.ListCreateAPIView):
     queryset = Visit.objects.all()
     serializer_class = VisitSerializer
     def post(self, request):
-        serializer = VisitSerializer(data=request.data)
+        session_detail = self.request.data["sessionDetails"]
+        prescription = request.data["prescription"]
+        serializer = VisitSerializer(data=session_detail)
         doctor = MyUser.objects.get(user_id=self.request.user.user_id)
         if serializer.is_valid() and (doctor.is_doctor):
-            session=Session.objects.get(session_id=request.data['session']) 
+            session=Session.objects.get(session_id=session_detail['session']) 
             if session.doctor_id!=doctor:
                 return Response({"Error":"Doctor doesn't own this Session"}, status=status.HTTP_400_BAD_REQUEST)             
             serializer.save(session = session)
             returnData=serializer.data
+            visit_id = returnData['visit_id']
+            returnData['prescription']=[]
+            for i in prescription:
+                i['visit'] = visit_id
+                returnData['prescription'].append(set_prescription(i))
             return Response(returnData, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
