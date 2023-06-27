@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from rest_framework import status,generics
 from .models import *
+from prescription.models import *
 from rest_framework.permissions import IsAuthenticated
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from accounts.serializers import *
+from prescription.serializers import *
 import random
 # Create your views here.
 

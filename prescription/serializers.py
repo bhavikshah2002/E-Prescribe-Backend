@@ -12,3 +12,14 @@ class MedicineGetSerializer(serializers.ModelSerializer):
     class Meta:
         model=Medicine
         fields=['med_id','med_name']
+
+class MedicineSuggestionSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=Medicine
+        fields=['med_name']
+
+class PrescriptionSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model=Prescription
+        fields="__all__"
