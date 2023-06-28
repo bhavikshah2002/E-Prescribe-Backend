@@ -6,4 +6,5 @@ urlpatterns = [
     path('email_verify/',verifyEmail,name='verifyEmail'),
     path('doctor_verify/',verifyDoctor,name='verifyDoctor'),
     path('MyUser/<int:pk>/',MyUserView.as_view(),name='MyUser'),
+    path('doctordetails/',DoctorDetailsView.as_view(),name='DoctorDetails'),
 ]

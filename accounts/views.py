@@ -111,3 +111,21 @@ class MyUserView(generics.RetrieveUpdateDestroyAPIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+
+class DoctorDetailsView(generics.ListCreateAPIView):
+    queryset = DoctorDetails.objects.all()
+    serializer_class = DoctorDetailsSerializer
+    def post(self, request):
+        serializer = DoctorDetailsSerializer(data=request.data)
+        doctor = MyUser.objects.get(user_id=request.data["doctor"])
+        if serializer.is_valid() :
+            serializer.save(doctor=doctor)
+            returnData=serializer.data
+            return Response(returnData, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        query = DoctorDetails.objects.all()
+        serializer = DoctorDetailsSerializer(query, many=True)
+        returnData=serializer.data
+        return Response(returnData, status=status.HTTP_201_CREATED)

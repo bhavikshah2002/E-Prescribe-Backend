@@ -26,3 +26,14 @@ class MyUser(AbstractUser):
 def create_auth_token(sender, instance = None, created = False, **kwargs):
     if created:
         token=Token.objects.create(user = instance)
+
+class DoctorDetails(models.Model):
+    doctor = models.ForeignKey(MyUser,on_delete=models.CASCADE,null=True,related_name="doctor")
+    address = models.TextField(max_length=250,blank=True,null=True)
+    address_link = models.TextField(max_length=250,blank=True,null=True)
+    phonenumber = models.CharField(max_length=12,unique=True)
+    profile_pic = models.ImageField(upload_to='images/',default='default.png')
+    clinic_start_time = models.IntegerField(null=True,default=9)
+    clinic_end_time = models.IntegerField(null=True,default=19)
+    def __str__(self):
+        return self.doctor

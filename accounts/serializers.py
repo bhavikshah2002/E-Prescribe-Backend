@@ -49,3 +49,9 @@ class LoginSerializer(serializers.ModelSerializer):
         if not user.is_active:
             raise AuthenticationFailed('Account disabled, contact admin')
         return {'email': user.email}
+
+class DoctorDetailsSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=DoctorDetails
+        fields="__all__"
