@@ -31,6 +31,8 @@ class DoctorDetails(models.Model):
     doctor = models.ForeignKey(MyUser,on_delete=models.CASCADE,null=True,related_name="doctor")
     address = models.TextField(max_length=250,blank=True,null=True)
     address_link = models.TextField(max_length=250,blank=True,null=True)
+    qualification = models.CharField(max_length=100,default="Not Specified",blank=True,null=True)
+    type = models.TextField(max_length=250,blank=True,null=True,default="Others")
     phonenumber = models.CharField(max_length=12,unique=True)
     profile_pic = models.ImageField(upload_to='images/',default='default.png')
     clinic_start_time = models.IntegerField(null=True,default=9)
