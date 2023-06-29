@@ -129,3 +129,14 @@ class DoctorDetailsView(generics.ListCreateAPIView):
         serializer = DoctorDetailsSerializer(query, many=True)
         returnData=serializer.data
         return Response(returnData, status=status.HTTP_201_CREATED)
+    
+class DoctorDetailsUpdateView(generics.UpdateAPIView):
+    queryset = DoctorDetails.objects.all()
+    serializer_class = DoctorDetailsSerializer
+    def patch(self, request):
+        query=DoctorDetails.objects.get(doctor=self.request.user.user_id) 
+        serializer = DoctorDetailsSerializer(query, data=request.data,partial=True)            
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 

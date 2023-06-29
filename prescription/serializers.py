@@ -23,3 +23,8 @@ class PrescriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model=Prescription
         fields="__all__"
+
+class PrescriptionGetSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model=Prescription
+        fields=['pres_id','medicine','morning','afternoon','night','num_days']

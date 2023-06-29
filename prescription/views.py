@@ -69,4 +69,13 @@ def set_prescription(data):
             return serializer.errors
     except:
         return serializer.errors
-    
+
+def get_prescription(id):
+    data = Prescription.objects.filter(visit=id)
+    serializer = PrescriptionGetSerializer(data,many=True)
+    returnData = ""
+    returnData= serializer.data
+    for i in returnData:
+        i['medicine'] = Medicine.objects.get(med_id = i['medicine']).med_name
+    return returnData
+

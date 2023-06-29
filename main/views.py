@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from accounts.serializers import *
 from prescription.serializers import *
 import random
-from prescription.views import set_prescription
+from prescription.views import set_prescription,get_prescription
 # Create your views here.
 
 class SessionView(generics.ListCreateAPIView):
@@ -113,5 +113,8 @@ class VisitGetView(generics.ListAPIView):
         serializer = SessionVisit(query,many = True)
         returnData = ""
         returnData=serializer.data
+        # returnData["prescription"]=[]
+        for i in returnData:
+            i['prescription']=get_prescription(i['visit_id'])
         return Response(returnData, status=status.HTTP_201_CREATED)
-    
+
