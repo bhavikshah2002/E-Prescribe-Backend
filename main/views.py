@@ -30,8 +30,9 @@ class SessionView(generics.ListCreateAPIView):
         serializer = SessionSerializer(query, many=True)
         returnData=serializer.data
         for i in returnData:
-            i['last_vist']=i['start_date']
-            i['num_vist']=random.randint(0,10)
+            visits = Visit.objects.filter(session = i["session_id"])
+            i['last_vist']=visits.last().visit_date
+            i['num_vist']=visits.count()
         return Response(returnData, status=status.HTTP_201_CREATED)
 
     
