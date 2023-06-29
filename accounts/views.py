@@ -140,3 +140,15 @@ class DoctorDetailsUpdateView(generics.UpdateAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
+class GetDoctorView(generics.ListAPIView):
+    queryset = DoctorDetails.objects.all()
+    serializer_class = DoctorDetailsSerializer    
+    def get(self, request):
+        returnData = getDocDetails(self.request.user.user_id)
+        return Response(returnData, status=status.HTTP_201_CREATED)
+    
+def getDocDetails(id):
+    data = DoctorDetails.objects.get(doctor = id)
+    serializer = DoctorDetailsSerializer(data)
+    return serializer.data
