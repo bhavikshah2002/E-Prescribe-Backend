@@ -10,6 +10,7 @@ from accounts.serializers import *
 from prescription.serializers import *
 import random
 from prescription.views import set_prescription,get_prescription
+from accounts.views import getDocDetails
 # Create your views here.
 
 class SessionView(generics.ListCreateAPIView):
@@ -117,4 +118,16 @@ class VisitGetView(generics.ListAPIView):
         for i in returnData:
             i['prescription']=get_prescription(i['visit_id'])
         return Response(returnData, status=status.HTTP_201_CREATED)
+    
+class PatientGetDoctorView(generics.ListAPIView):
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializer
+    def get(self, request):
+        query = Session.objects.filter(patient_id = self.request.user.user_id).values_list('doctor_id',flat=True).distinct()
+        returnData=[]
+        for i in query:
+            returnData.append(getDocDetails(i))
+        return Response(returnData, status=status.HTTP_201_CREATED)
+
+
 
