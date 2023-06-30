@@ -38,4 +38,4 @@ class DoctorDetails(models.Model):
     clinic_start_time = models.IntegerField(null=True,default=9)
     clinic_end_time = models.IntegerField(null=True,default=19)
     def __str__(self):
-        return self.doctor
+        return str(self.doctor)

@@ -32,8 +32,12 @@ class SessionView(generics.ListCreateAPIView):
         returnData=serializer.data
         for i in returnData:
             visits = Visit.objects.filter(session = i["session_id"])
-            i['last_vist']=visits.last().visit_date
-            i['num_vist']=visits.count()
+            i['last_vist']=i['start_date']
+            i['num_visit']=0
+            if visits.last()!=None:
+                i['last_vist']=visits.last().visit_date
+                i['num_vist']=visits.count()
+            
         return Response(returnData, status=status.HTTP_201_CREATED)
 
     

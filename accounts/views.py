@@ -152,3 +152,35 @@ def getDocDetails(id):
     data = DoctorDetails.objects.get(doctor = id)
     serializer = DoctorDetailsSerializer(data)
     return serializer.data
+
+def getDoctorObject(id):
+    return DoctorDetails.objects.filter(doctor = id)
+
+class DoctorSearch(generics.ListAPIView):
+    queryset=DoctorDetails.objects.all()
+    serializer_class=DoctorDetailsSerializer
+    def get_queryset(self):
+        name=DoctorDetails.objects.none()           
+        address=DoctorDetails.objects.none()           
+        types=DoctorDetails.objects.none()           
+        query1=self.request.GET.get('name')
+        if query1 != None:
+            name1 = MyUser.objects.filter(first_name__icontains=query1).filter(is_doctor = True)
+            name2 = MyUser.objects.filter(last_name__icontains=query1).filter(is_doctor = True)
+            name_doc = name1 | name2
+            name_doc = name_doc.filter(is_verified=True).values('user_id').distinct()
+            
+            for i in name_doc:
+                name|=getDoctorObject(i['user_id'])
+        query2 = self.request.GET.get('address')
+        if query2 != None:
+            address = DoctorDetails.objects.filter(address__icontains = query2)
+        query3 = self.request.GET.get('type')
+        if query3 != None:
+            types = DoctorDetails.objects.filter(type__icontains = query3) 
+        allDoctor = name | address | types
+        # serializer = DoctorDetailsSerializer(allDoctor,many=True)
+        # returnData = serializer.data
+        # for i in allDoctor:
+        #     i['first_name']=i['doctor'].first_name
+        return allDoctor
