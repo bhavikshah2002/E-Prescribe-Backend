@@ -8,4 +8,6 @@ urlpatterns = [
     path('visit/',VisitView.as_view(),name='Visit'),
     path('sessionvisit/',VisitGetView.as_view(),name='Visit-Session'),
     path('patientgetdoctor/',PatientGetDoctorView.as_view(),name='PatientGetDoctor'),
+    path('patientgetsession/<int:id>/',PatientGetSessionView.as_view(),name='PatientGetSession'),
+    
 ]

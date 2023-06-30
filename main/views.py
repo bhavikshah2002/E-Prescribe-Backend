@@ -27,7 +27,7 @@ class SessionView(generics.ListCreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def get(self, request,id):
-        query = Session.objects.filter(doctor_id = self.request.user.user_id).filter(patient_id=id)
+        query = Session.objects.filter(doctor_id = self.request.user.user_id).filter(patient_id=id).order_by('-start_date')
         serializer = SessionSerializer(query, many=True)
         returnData=serializer.data
         for i in returnData:
@@ -114,7 +114,7 @@ class VisitGetView(generics.ListAPIView):
     serializer_class = SessionVisit
     def get(self, request):
         session=self.request.GET.get('session')
-        query = Visit.objects.filter(session = session)
+        query = Visit.objects.filter(session = session).order_by('-visit_date')
         serializer = SessionVisit(query,many = True)
         returnData = ""
         returnData=serializer.data
@@ -134,4 +134,19 @@ class PatientGetDoctorView(generics.ListAPIView):
         returnData  = getDocDetails(doctors)
         return Response(returnData, status=status.HTTP_201_CREATED)
 
+class PatientGetSessionView(generics.ListAPIView):
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializer
+    def get(self, request,id):
+        query = Session.objects.filter(patient_id= self.request.user.user_id).filter(doctor_id=id).order_by('-start_date')
+        serializer = SessionSerializer(query, many=True)
+        returnData=serializer.data
+        for i in returnData:
+            visits = Visit.objects.filter(session = i["session_id"])
+            i['last_vist']=i['start_date']
+            i['num_visit']=0
+            if visits.last()!=None:
+                i['last_vist']=visits.last().visit_date
+                i['num_vist']=visits.count()     
+        return Response(returnData, status=status.HTTP_201_CREATED)        
 
