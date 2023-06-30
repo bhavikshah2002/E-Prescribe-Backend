@@ -148,10 +148,16 @@ class GetDoctorView(generics.ListAPIView):
         returnData = getDocDetails(self.request.user.user_id)
         return Response(returnData, status=status.HTTP_201_CREATED)
     
-def getDocDetails(id):
-    data = DoctorDetails.objects.get(doctor = id)
-    serializer = DoctorDetailsSerializer(data)
-    return serializer.data
+def getDocDetails(allDoctor):
+    serializer = DoctorDetailsSerializer(allDoctor,many=True)
+    returnData = serializer.data
+    for i in returnData:
+        user_serializer = MyUserDoctorSerializer(MyUser.objects.get(user_id=i['doctor']))
+        i['email']  = user_serializer.data["email"]
+        i['first_name']  = user_serializer.data["first_name"]
+        i['last_name']  = user_serializer.data["last_name"]
+        i['username']  = user_serializer.data["username"]
+    return returnData
 
 def getDoctorObject(id):
     return DoctorDetails.objects.filter(doctor = id)
@@ -159,10 +165,10 @@ def getDoctorObject(id):
 class DoctorSearch(generics.ListAPIView):
     queryset=DoctorDetails.objects.all()
     serializer_class=DoctorDetailsSerializer
-    def get_queryset(self):
-        name=DoctorDetails.objects.none()           
-        address=DoctorDetails.objects.none()           
-        types=DoctorDetails.objects.none()           
+    def get(self,request):
+        name=DoctorDetails.objects.all()           
+        address=DoctorDetails.objects.all()           
+        types=DoctorDetails.objects.all()           
         query1=self.request.GET.get('name')
         if query1 != None:
             name1 = MyUser.objects.filter(first_name__icontains=query1).filter(is_doctor = True)
@@ -178,9 +184,6 @@ class DoctorSearch(generics.ListAPIView):
         query3 = self.request.GET.get('type')
         if query3 != None:
             types = DoctorDetails.objects.filter(type__icontains = query3) 
-        allDoctor = name | address | types
-        # serializer = DoctorDetailsSerializer(allDoctor,many=True)
-        # returnData = serializer.data
-        # for i in allDoctor:
-        #     i['first_name']=i['doctor'].first_name
-        return allDoctor
+        allDoctor = name & address & types
+        returnData = getDocDetails(allDoctor)
+        return Response(returnData, status=status.HTTP_201_CREATED)

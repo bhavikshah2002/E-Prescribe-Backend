@@ -55,3 +55,8 @@ class DoctorDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model=DoctorDetails
         fields="__all__"
+
+class MyUserDoctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = MyUser
+        fields = ["username","first_name","last_name","email"]

@@ -128,10 +128,10 @@ class PatientGetDoctorView(generics.ListAPIView):
     serializer_class = SessionSerializer
     def get(self, request):
         query = Session.objects.filter(patient_id = self.request.user.user_id).values_list('doctor_id',flat=True).distinct()
-        returnData=[]
+        doctors = DoctorDetails.objects.none()
         for i in query:
-            returnData.append(getDocDetails(i))
+            doctors|=DoctorDetails.objects.filter(doctor = i)
+        returnData  = getDocDetails(doctors)
         return Response(returnData, status=status.HTTP_201_CREATED)
-
 
 
