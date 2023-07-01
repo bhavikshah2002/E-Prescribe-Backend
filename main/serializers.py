@@ -18,3 +18,8 @@ class SessionVisit(serializers.ModelSerializer):
         model=Visit
         fields="__all__"
 
+class VisitUrlSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Visit
+        fields=["visit_id","session","visit_date"]
+

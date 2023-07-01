@@ -57,6 +57,30 @@ class MedicineSuggestion(generics.ListCreateAPIView):
         except:
             return Response({"Failure":"Not a valid doctor"}, status=status.HTTP_400_BAD_REQUEST)
 
+class PrescriptionGetUrlDetailsView(generics.ListAPIView):
+    queryset = Prescription.objects.all()
+    serializer_class = PrescriptionGetSerializer
+    def get(self, request):
+        query = Visit.objects.get(url_id = self.request.GET.get('url_id'))
+        serializer = VisitUrlSerializer(query)
+        returnData={}
+        # Add Visit Date
+        returnData["visit_date"]=serializer.data["visit_date"]
+        returnData["prescription"]=get_prescription(serializer.data["visit_id"])
+        session = Session.objects.get(session_id=serializer.data["session"])
+        patient = session.patient_id        
+        doctor = session.doctor_id
+        returnData["doctor"] = {
+            "first_name":doctor.first_name,
+            "last_name":doctor.last_name,
+        }       
+        returnData["patient"] = {
+            "first_name":patient.first_name,
+            "last_name":patient.last_name,
+            "age":patient.age
+        }       
+        return Response(returnData, status=status.HTTP_201_CREATED)
+
 def set_prescription(data):
     serializer = PrescriptionSerializer(data=data)
     try:
