@@ -1,6 +1,6 @@
 from django.db import models
 from accounts.models import MyUser
-import json
+import uuid
 # Create your models here.
 
 class Session(models.Model):
@@ -14,6 +14,7 @@ class Session(models.Model):
 
 class Visit(models.Model):
     visit_id = models.AutoField(primary_key=True)
+    url_id = models.UUIDField(default = uuid.uuid4)
     session = models.ForeignKey(Session, on_delete=models.CASCADE,null=True,related_name="session")
     visit_date = models.DateTimeField(auto_now_add=True)
     symptoms = models.TextField(max_length=250,blank=True,null=True)
