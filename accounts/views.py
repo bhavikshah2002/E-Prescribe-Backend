@@ -100,7 +100,8 @@ class LoginView(generics.CreateAPIView):
 class MyUserView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MyUser.objects.all()
     serializer_class = MyUserSerializer
-    def get(self,request,pk):
+    def get(self,request):
+        pk = self.request.user.user_id
         query=MyUser.objects.get(pk=pk)        
         serializer=MyUserSerializer(query)       
         return Response(serializer.data)
