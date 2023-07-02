@@ -36,7 +36,7 @@ class SessionView(generics.ListCreateAPIView):
             i['num_visit']=0
             if visits.last()!=None:
                 i['last_vist']=visits.last().visit_date
-                i['num_vist']=visits.count()
+                i['num_visit']=visits.count()
             
         return Response(returnData, status=status.HTTP_201_CREATED)
 
