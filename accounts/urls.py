@@ -9,5 +9,6 @@ urlpatterns = [
     path('doctordetails/',DoctorDetailsView.as_view(),name='DoctorDetails'),
     path('doctorsearch/',DoctorSearch.as_view(),name='DoctorSearch'),
     path('getdoctor/',GetDoctorView.as_view(),name='GetDoctor'),
+    path('getdoctorbyid/',GetDoctorByIDView.as_view(),name='GetDoctorByID'),
     path('doctordetails/update/',DoctorDetailsUpdateView.as_view(),name='DoctorDetailsUpdate'),
 ]

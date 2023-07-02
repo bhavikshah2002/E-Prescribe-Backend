@@ -146,7 +146,8 @@ class GetDoctorView(generics.ListAPIView):
     queryset = DoctorDetails.objects.all()
     serializer_class = DoctorDetailsSerializer    
     def get(self, request):
-        returnData = getDocDetails(self.request.user.user_id)
+        doc = getDoctorObject(self.request.user.user_id)
+        returnData = getDocDetails(doc)
         return Response(returnData, status=status.HTTP_201_CREATED)
     
 def getDocDetails(allDoctor):
@@ -167,18 +168,22 @@ class DoctorSearch(generics.ListAPIView):
     queryset=DoctorDetails.objects.all()
     serializer_class=DoctorDetailsSerializer
     def get(self,request):
-        name=DoctorDetails.objects.all()           
+        name=DoctorDetails.objects.none()           
         address=DoctorDetails.objects.all()           
         types=DoctorDetails.objects.all()           
         query1=self.request.GET.get('name')
         if query1 != None:
             name1 = MyUser.objects.filter(first_name__icontains=query1).filter(is_doctor = True)
             name2 = MyUser.objects.filter(last_name__icontains=query1).filter(is_doctor = True)
-            name_doc = name1 | name2
+            name3 = MyUser.objects.filter(username__icontains=query1).filter(is_doctor = True)
+            name_doc = name1 | name2 | name3
+            print(name_doc)
             name_doc = name_doc.filter(is_verified=True).values('user_id').distinct()
-            
+            print(name_doc)
             for i in name_doc:
                 name|=getDoctorObject(i['user_id'])
+        else:
+            name = DoctorDetails.objects.all()
         query2 = self.request.GET.get('address')
         if query2 != None:
             address = DoctorDetails.objects.filter(address__icontains = query2)
@@ -188,3 +193,11 @@ class DoctorSearch(generics.ListAPIView):
         allDoctor = name & address & types
         returnData = getDocDetails(allDoctor)
         return Response(returnData, status=status.HTTP_201_CREATED)
+    
+class GetDoctorByIDView(generics.ListAPIView):
+    queryset = DoctorDetails.objects.all()
+    serializer_class = DoctorDetailsSerializer    
+    def get(self, request):
+        doc = getDoctorObject(self.request.GET.get('id'))
+        returnData = getDocDetails(doc)
+        return Response(returnData, status=status.HTTP_201_CREATED)  
