@@ -11,4 +11,5 @@ urlpatterns = [
     path('patientgetsession/<int:id>/',PatientGetSessionView.as_view(),name='PatientGetSession'),
     path('patientgetrecentvisit/',PatientGetRecentVisitView.as_view(),name='PatientGetRecentVisit'),
     path('patientgetrecentsession/',PatientGetRecentSessionView.as_view(),name='PatientGetRecentSession'),  
+    path('sessionbyid/',SessionByIDView.as_view(),name='SessionByID'),  
 ]

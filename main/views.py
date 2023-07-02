@@ -40,7 +40,8 @@ class SessionView(generics.ListCreateAPIView):
             
         return Response(returnData, status=status.HTTP_201_CREATED)
 
-    
+
+
 
 class PatientDetailsView(generics.ListAPIView):
     queryset = Session.objects.all()
@@ -184,4 +185,14 @@ class PatientGetRecentVisitView(generics.ListAPIView):
         # returnData["prescription"]=[]
         for i in returnData:
             i['prescription']=get_prescription(i['visit_id'])
+        return Response(returnData, status=status.HTTP_201_CREATED)
+
+class SessionByIDView(generics.ListAPIView):
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializer
+    def get(self, request):
+        query = Session.objects.filter(session_id= self.request.GET.get('session_id')).order_by('-start_date')
+        serializer = SessionSerializer(query, many=True)
+        returnData=serializer.data
+        returnData = addDetailsInSession(returnData)    
         return Response(returnData, status=status.HTTP_201_CREATED)
