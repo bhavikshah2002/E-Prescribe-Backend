@@ -19,7 +19,7 @@ class Visit(models.Model):
     visit_date = models.DateTimeField(auto_now_add=True)
     symptoms = models.TextField(max_length=250,blank=True,null=True)
     note = models.TextField(max_length=500,blank=True,null=True)
-    temperature = models.IntegerField(null=True,blank=True)
+    temperature = models.DecimalField(null=True,blank=True,max_digits=5,decimal_places=2)
     sugar = models.IntegerField(null=True,blank=True)
     bp = models.CharField(null=True,blank=True,max_length=10)
     def __str__(self):
